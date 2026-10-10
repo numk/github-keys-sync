@@ -35,7 +35,7 @@ for arg in "$@"; do
   # content outside this user's block
   awk -v b="$B" -v e="$E" '$0==b{s=1;next} $0==e{s=0;next} !s' "$TMP" > "$TMP.rest"
   # dedupe on "type base64" against fetched set and against manual keys
-  awk 'NR==FNR{ if ($0 !~ /^#/ && NF>=2) seen[$1" "$2]=1; next }
+  awk -v rest="$TMP.rest" 'FILENAME==rest{ if ($0 !~ /^#/ && NF>=2) seen[$1" "$2]=1; next }
        { k=$1" "$2; if (!seen[k]++) print }' "$TMP.rest" "$TMP.new" > "$TMP.keys"
 
   { cat "$TMP.rest"
